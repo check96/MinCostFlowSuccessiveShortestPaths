@@ -27,30 +27,31 @@ for node in graph.nodes:
 
 while len(overflowNode) > 0 and len(defectsNode) > 0:
     path = graph.findPath(overflowNode[0], defectsNode[0])
-    print(path)
+  #  print(path)
 
     if path is []:
         break
 
     minim = sys.maxsize
     for i in range(len(path)-1):
-        if graph.nodes[path[i]-1].getCapacity(path[i+1]) < minim:
-            minim = graph.nodes[path[i]-1].getCapacity(path[i+1])
+        residual = graph.nodes[path[i] - 1].getResidual(path[i + 1])
+        if  residual < minim:
+            minim = residual
 
     flow = min(abs(graph.nodes[overflowNode[0]-1].balance), graph.nodes[defectsNode[0]-1].balance, minim)
-    print(flow)
+    #print(flow)
+
     graph.updateFlow(flow, path)
     graph.updateCosts(path)
-
     graph.updateBalance(overflowNode[0], defectsNode[0], flow)
 
     if graph.nodes[overflowNode[0]-1].balance == 0:
         overflowNode.pop(0)
-
     if graph.nodes[defectsNode[0]-1].balance == 0:
         defectsNode.pop(0)
 
-    print(overflowNode)
-    print(defectsNode)
-    graph.print()
+    #print(overflowNode)
+    #print(defectsNode)
+
+graph.print()
 

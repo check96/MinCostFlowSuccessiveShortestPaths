@@ -4,6 +4,7 @@ class Node:
 
     def __init__(self,value,balance,edges):
         self.value = value
+        self.originalBalance = balance
         self.balance = balance
         self.edges = edges
 
@@ -17,24 +18,25 @@ class Node:
         for e in self.edges:
             if e.node.value == edge:
                 e.flow += flow
-                e.capacity -= flow
+                e.residualCapacity -= flow
 
     def updateCost(self,edge):
         for e in self.edges:
             if e.node.value == edge:
-                e.weight = e.weight + self.potential - e.node.potential
+                e.reductWeight = e.reductWeight + self.potential - e.node.potential
 
 
     def print(self):
-        print("  node" + str(self.value) + "(" + str(self.balance) + "," + str(self.potential) + ")")
+        print("  node" + str(self.value) + "(" + str(self.originalBalance) + "," + str(self.potential) + ")")
 
     def addEdge(self, edge):
         self.edges.append(edge)
 
-    def getCapacity(self, edge):
+    def getResidual(self, edge):
         for e in self.edges:
             if e.node.value == edge:
-                return e.capacity
+                return e.residualCapacity
+
 
 class Edge:
 
@@ -44,6 +46,8 @@ class Edge:
         self.node = node
         self.capacity = capacity
         self.weight = weight
+        self.residualCapacity = capacity
+        self.reductWeight = weight
 
     def print(self):
         print("     edge(" + str(self.node.value) + ") = (" + str(self.capacity) + "," +

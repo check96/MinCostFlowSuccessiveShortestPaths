@@ -32,14 +32,14 @@ def dijkstra(nodes,root):
 
         # expand node and update path costs
         for edge in nodes[node-1].edges:
-            if not visited[edge.node.value] and edge.weight + costs[node][0] < costs[edge.node.value][0] \
-                    and edge.capacity > 0:
-                costs[edge.node.value] = (edge.weight + costs[node][0], node)
+            if not visited[edge.node.value] and edge.reductWeight + costs[node][0] < costs[edge.node.value][0] \
+                    and edge.residualCapacity > 0:
+                costs[edge.node.value] = (edge.reductWeight + costs[node][0], node)
 
                 if edge.node.value not in queue:
                     queue.append(edge.node.value)
 
-    print(costs)
+   # print(costs)
     return costs
 
 class Graph:
