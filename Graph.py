@@ -32,7 +32,8 @@ def dijkstra(nodes,root):
 
         # expand node and update path costs
         for edge in nodes[node-1].edges:
-            if not visited[edge.node.value] and edge.weight + costs[node][0] < costs[edge.node.value][0]:
+            if not visited[edge.node.value] and edge.weight + costs[node][0] < costs[edge.node.value][0] \
+                    and edge.capacity > 0:
                 costs[edge.node.value] = (edge.weight + costs[node][0], node)
 
                 if edge.node.value not in queue:
@@ -64,8 +65,11 @@ class Graph:
         '''
 
         costs = dijkstra(self.nodes,root)
-        path = [end]
 
+        for i in range(len(self.nodes)):
+            self.nodes[i].potential = costs[i+1][0]
+
+        path = [end]
         # iterative search for predecessors
         while end != root:
             path.append(costs[end][1])
@@ -75,6 +79,14 @@ class Graph:
         return path
 
     # increase flow in edges of the path
-    def addFlow(self,flow, path):
+    def updateFlow(self, flow, path):
         for i in range(len(path)-1):
-            self.nodes[path[i]-1].addFlow(flow,path[i+1])
+            self.nodes[path[i]-1].updateFlow(flow,path[i+1])
+
+    def updateCosts(self, path):
+        for i in range(len(path) - 1):
+            self.nodes[i].updateCost(path[i+1])
+
+    def updateBalance(self, root, end, flow):
+        self.nodes[root-1].balance += flow
+        self.nodes[end-1].balance -= flow

@@ -13,11 +13,17 @@ class Node:
     def setPotential(self,potential):
         self.potential = potential
 
-    def addFlow(self,flow,edge):
+    def updateFlow(self,flow,edge):
         for e in self.edges:
             if e.node.value == edge:
                 e.flow += flow
                 e.capacity -= flow
+
+    def updateCost(self,edge):
+        for e in self.edges:
+            if e.node.value == edge:
+                e.weight = e.weight + self.potential - e.node.potential
+
 
     def print(self):
         print("  node" + str(self.value) + "(" + str(self.balance) + "," + str(self.potential) + ")")
