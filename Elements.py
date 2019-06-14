@@ -1,12 +1,11 @@
 class Node:
 
     potential = 0
-    backwardEdges = []
 
-    def __init__(self,value,balance,forwardEdges):
+    def __init__(self,value,balance,edges):
         self.value = value
         self.balance = balance
-        self.forwardEdges = forwardEdges
+        self.edges = edges
 
     def setBalance(self,balance):
         self.balance = balance
@@ -15,27 +14,30 @@ class Node:
         self.potential = potential
 
     def addFlow(self,flow,edge):
-        for e in self.forwardEdges:
+        for e in self.edges:
             if e.node.value == edge:
-                e.addFlow(flow)
+                e.flow += flow
+                e.capacity -= flow
 
     def print(self):
         print("  node" + str(self.value) + "(" + str(self.balance) + "," + str(self.potential) + ")")
 
+    def addEdge(self, edge):
+        self.edges.append(edge)
+
+    def getCapacity(self, edge):
+        for e in self.edges:
+            if e.node.value == edge:
+                return e.capacity
 
 class Edge:
+
     flow = 0
 
     def __init__(self, node, capacity, weight):
         self.node = node
         self.capacity = capacity
         self.weight = weight
-
-    def addFlow(self, flow):
-        self.flow += flow
-
-    def removeFlow(self, flow):
-        self.flow -= flow
 
     def print(self):
         print("     edge(" + str(self.node.value) + ") = (" + str(self.capacity) + "," +

@@ -31,7 +31,7 @@ def dijkstra(nodes,root):
         visited[node] = True
 
         # expand node and update path costs
-        for edge in nodes[node-1].forwardEdges:
+        for edge in nodes[node-1].edges:
             if not visited[edge.node.value] and edge.weight + costs[node][0] < costs[edge.node.value][0]:
                 costs[edge.node.value] = (edge.weight + costs[node][0], node)
 
@@ -54,7 +54,7 @@ class Graph:
         print("  edges(node1,node2)=(capacity,weight,flow)\n")
         for node in self.nodes:
             node.print()
-            for edge in node.forwardEdges:
+            for edge in node.edges:
                 edge.print()
 
 

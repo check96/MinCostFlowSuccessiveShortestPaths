@@ -1,6 +1,9 @@
+import sys
+
 from Graph import Graph
 from Elements import Node
 from Elements import Edge
+
 
 node6 = Node(6,2, [])
 node5 = Node(5,0, [Edge(node6,2,2)])
@@ -11,11 +14,28 @@ node1 = Node(1,-3, [Edge(node2,4,2), Edge(node3,1,3)])
 
 nodes = [node1,node2,node3,node4,node5,node6]
 
+defectsNode = []
+overflowNode = []
+
 graph = Graph(nodes)
 
-path = graph.findPath(node1.value,node6.value)
-print(path)
+for node in graph.nodes:
+    if node.balance < 0:
+        overflowNode.append(node.value)
+    elif node.balance > 0:
+        defectsNode.append(node.value)
 
-graph.addFlow(5,path)
-graph.print()
+while len(overflowNode) > 0 and len(defectsNode) > 0:
+    path = graph.findPath(overflowNode[0], defectsNode[0])
+    print(path)
+
+    minim = sys.maxsize
+    for i in range(len(path)-1):
+        if graph.nodes[path[i]-1].getCapacity(path[i+1]) < minim:
+            minim = graph.nodes[path[i]-1].getCapacity(path[i+1])
+
+    flow = min(abs(graph.nodes[overflowNode[0]-1].balance), graph.nodes[defectsNode[0]-1].balance, minim)
+
+    graph.addFlow(flow, path)
+    graph.print()
 
