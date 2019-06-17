@@ -14,28 +14,11 @@ class Node:
     def setPotential(self,potential):
         self.potential = potential
 
-    def updateFlow(self,flow,edge):
-        for e in self.edges:
-            if e.node.value == edge:
-                e.flow += flow
-                e.residualCapacity -= flow
-
-    def updateCost(self,edge):
-        for e in self.edges:
-            if e.node.value == edge:
-                e.reductWeight = e.reductWeight + self.potential - e.node.potential
-
-
     def print(self):
         print("  node" + str(self.value) + "(" + str(self.originalBalance) + "," + str(self.potential) + ")")
 
     def addEdge(self, edge):
-        self.edges.append(edge)
-
-    def getResidual(self, edge):
-        for e in self.edges:
-            if e.node.value == edge:
-                return e.residualCapacity
+        self.edges[edge.node.value] = edge
 
 
 class Edge:

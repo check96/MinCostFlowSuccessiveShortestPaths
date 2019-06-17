@@ -14,7 +14,7 @@ def dijkstra(nodes,root):
     queue = [root]
 
     # update costs while queue is not empty
-    while queue != []:
+    while queue:
 
         # select node with minimum path cost to expand
         min = sys.maxsize
@@ -31,7 +31,7 @@ def dijkstra(nodes,root):
         visited[node] = True
 
         # expand node and update path costs
-        for edge in nodes[node-1].edges:
+        for edge in nodes[node-1].edges.values():
             if not visited[edge.node.value] and edge.reductWeight + costs[node][0] < costs[edge.node.value][0] \
                     and edge.residualCapacity > 0:
                 costs[edge.node.value] = (edge.reductWeight + costs[node][0], node)
@@ -41,6 +41,7 @@ def dijkstra(nodes,root):
 
    # print(costs)
     return costs
+
 
 class Graph:
 
@@ -55,37 +56,44 @@ class Graph:
         print("  edges(node1,node2)=(capacity,weight,flow)\n")
         for node in self.nodes:
             node.print()
-            for edge in node.edges:
+            for edge in node.edges.values():
                 edge.print()
 
 
-    def findPath(self, root, end):
-        '''
-            apply Dijkstra algorithm and return minimum shortest path from root to end
-        '''
+    def findPath(self, overflowNodes, defectsNodes):
 
-        costs = dijkstra(self.nodes,root)
+        for root in overflowNodes:
+            # apply Dijkstra algorithm
+            costs = dijkstra(self.nodes,root)
 
-        for i in range(len(self.nodes)):
-            self.nodes[i].potential = costs[i+1][0]
+            for i in range(len(self.nodes)):
+                self.nodes[i].potential = costs[i + 1][0]
 
-        path = [end]
-        # iterative search for predecessors
-        while end != root:
-            path.append(costs[end][1])
-            end = costs[end][1]
+            for end in defectsNodes:
+                # check if end node is reachable, that is the cost of its path is != sys.maxsize
+                if costs[end][0] == sys.maxsize:
+                    continue
 
-        path.reverse()
-        return path
+                path = [end]
 
-    # increase flow in edges of the path
-    def updateFlow(self, flow, path):
+                # iterative search for predecessors
+                while end != root:
+                    path.append(costs[end][1])
+                    end = costs[end][1]
+
+                if path:
+                    path.reverse()
+                    return path
+
+        return []
+
+    # increase flow and update reduct costs in edges of the path
+    def update(self, flow, path):
         for i in range(len(path)-1):
-            self.nodes[path[i]-1].updateFlow(flow,path[i+1])
-
-    def updateCosts(self, path):
-        for i in range(len(path) - 1):
-            self.nodes[i].updateCost(path[i+1])
+            edge = self.nodes[path[i]-1].edges[path[i+1]]
+            edge.flow += flow
+            edge.residualCapacity -= flow
+            edge.reductWeight = edge.reductWeight + self.nodes[path[i]-1].potential - edge.node.potential
 
     def updateBalance(self, root, end, flow):
         self.nodes[root-1].balance += flow
