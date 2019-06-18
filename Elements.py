@@ -15,7 +15,7 @@ class Node:
         self.potential = potential
 
     def print(self):
-        print("  node" + str(self.value) + "(" + str(self.originalBalance) + "," + str(self.potential) + ")")
+        print("  node" + str(self.value) + "(" + str(self.balance) + "," + str(self.potential) + ")")
 
     def addEdge(self, edge):
         self.edges[edge.node.value] = edge
@@ -33,5 +33,5 @@ class Edge:
         self.reductWeight = weight
 
     def print(self):
-        print("     edge(" + str(self.node.value) + ") = (" + str(self.capacity) + "," +
-              str(self.weight) + "," + str(self.flow) + ")")
+        print("     edge(" + str(self.node.value) + ") = (" + str(self.residualCapacity) + "," +
+              str(self.weight) + "," + str(self.reductWeight) + "," + str(self.flow) + ")")

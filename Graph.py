@@ -53,12 +53,17 @@ class Graph:
 
     def print(self):
         print("nodes (balance,potential)")
-        print("  edges(node1,node2)=(capacity,weight,flow)\n")
+        print("  edges(node1,node2)=(capacity,weight,reductWeight,flow)\n")
+
+        cost = 0
         for node in self.nodes:
             node.print()
             for edge in node.edges.values():
                 edge.print()
+                if edge.flow > 0:
+                    cost += edge.weight
 
+        print("\ntotal cost = " + str(cost))
 
     def findPath(self, overflowNodes, defectsNodes):
 
@@ -67,7 +72,7 @@ class Graph:
             costs = dijkstra(self.nodes,root)
 
             for i in range(len(self.nodes)):
-                self.nodes[i].potential = costs[i + 1][0]
+                self.nodes[i].potential -= costs[i+1][0]
 
             for end in defectsNodes:
                 # check if end node is reachable, that is the cost of its path is != sys.maxsize
@@ -87,14 +92,19 @@ class Graph:
 
         return []
 
-    # increase flow and update reduct costs in edges of the path
-    def update(self, flow, path):
+    # increase flow in edges of the path
+    def updateFlow(self, flow, path):
         for i in range(len(path)-1):
             edge = self.nodes[path[i]-1].edges[path[i+1]]
             edge.flow += flow
             edge.residualCapacity -= flow
-            edge.reductWeight = edge.reductWeight + self.nodes[path[i]-1].potential - edge.node.potential
+
+    def updateCosts(self):
+        for node in self.nodes:
+            for edge in node.edges.values():
+                if edge.residualCapacity > 0:
+                    edge.reductWeight = edge.weight - node.potential + edge.node.potential
 
     def updateBalance(self, root, end, flow):
-        self.nodes[root-1].balance += flow
-        self.nodes[end-1].balance -= flow
+        self.nodes[root-1].balance -= flow
+        self.nodes[end-1].balance += flow
