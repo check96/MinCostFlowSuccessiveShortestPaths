@@ -8,31 +8,23 @@ from Elements import Edge
 
 
 def drawGraph(graph, iteration, labels=None, node_size=1600, node_color='blue', node_alpha=0.3,
-               node_text_size=12,  edge_alpha=0.3, edge_tickness=1,
-               edge_text_pos=0.3,  text_font='sans-serif', ):
+               node_text_size=12,  edge_alpha=0.3, edge_tickness=1, edge_text_pos=0.7,  text_font='sans-serif', ):
+
     G = nx.DiGraph()
-    GR = nx.DiGraph()
 
     edges = []
-    backEdges = []
 
     for node in graph.nodes:
         G.add_node(node.value)
-        GR.add_node(node.value)
+
         for edge in node.edges.values():
-            if edge.residualCapacity > 0:
                 G.add_edge(node.value, edge.node.value)
-                edges.append((node.value, edge.node.value, edge.weight, edge.residualCapacity))
-            if edge.flow > 0:
-                GR.add_edge(edge.node.value,node.value)
-                backEdges.append((edge.node.value, node.value, -edge.weight, edge.flow))
+                edges.append((node.value, edge.node.value, edge.reductWeight, edge.residualCapacity))
 
     # draw graph
     graph_pos = nx.shell_layout(G)
-    gr_pos = nx.shell_layout(GR)
     nx.draw_networkx_nodes(G, graph_pos, node_size=node_size, alpha=node_alpha, node_color=node_color)
     nx.draw_networkx_edges(G, graph_pos, width=edge_tickness, alpha=edge_alpha, edge_color='green')
-    nx.draw_networkx_edges(GR, gr_pos, width=edge_tickness, alpha=edge_alpha, edge_color='blue')
     nx.draw_networkx_labels(G, graph_pos, font_size=node_text_size, font_family=text_font)
 
     labels = [(edge[2],edge[3]) for edge in edges]
@@ -40,13 +32,9 @@ def drawGraph(graph, iteration, labels=None, node_size=1600, node_color='blue', 
     edge_labels = dict(zip(edges, labels))
     nx.draw_networkx_edge_labels(G, graph_pos, edge_labels=edge_labels, label_pos=edge_text_pos)
 
-    labels = [(edge[2], edge[3]) for edge in backEdges]
-    edges = [(edge[0], edge[1]) for edge in backEdges]
-    edge_labels = dict(zip(edges, labels))
-    nx.draw_networkx_edge_labels(GR, graph_pos, edge_labels=edge_labels, label_pos=edge_text_pos)
     plt.savefig("path" + str(iteration) + ".png")
     # show graph
-   # plt.show()
+    #plt.show()
 
 
 # node(value,balance, { exitEdges(node,capacity,weight})
@@ -90,6 +78,8 @@ for node in graph.nodes:
 print("overflow = " + str(overflowNode))
 print("defect = " + str(defectsNode)+ "\n")
 iteration = 0
+drawGraph(graph,iteration)
+iteration += 1
 
 while len(overflowNode) > 0 and len(defectsNode) > 0:
     path = graph.findPath(overflowNode, defectsNode)
