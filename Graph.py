@@ -1,5 +1,5 @@
 import sys
-
+from PriorityQueue import PriorityQueue
 
 def dijkstra(nodes,root):
 
@@ -11,21 +11,13 @@ def dijkstra(nodes,root):
     visited = [False for i in range(len(nodes) + 1)]
 
     # queue contains open nodes to visit
-    queue = [root]
+    queue = PriorityQueue((root,0))
 
     # update costs while queue is not empty
-    while queue:
-
-        # select node with minimum path cost to expand
-        min = sys.maxsize
-        node = 0
-        for v in queue:
-            if costs[v][0] < min:
-                min = costs[v][0]
-                node = v
+    while not queue.isEmpty():
 
         # remove node from queue
-        queue.remove(node)
+        node = queue.pop()
 
         # mark node visited
         visited[node] = True
@@ -36,8 +28,8 @@ def dijkstra(nodes,root):
                     and edge.residualCapacity > 0:
                 costs[edge.node.value] = (edge.reductWeight + costs[node][0], node)
 
-                if edge.node.value not in queue:
-                    queue.append(edge.node.value)
+                if not queue.contains(edge.node.value):
+                    queue.add((edge.node.value,costs[edge.node.value]))
 
    # print(costs)
     return costs

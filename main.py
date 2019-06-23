@@ -54,7 +54,7 @@ def drawGraph(graph, node_size=1500, node_color='blue', node_alpha=0.3,
 
 
 def drawResidualGraph(graph, iteration, node_size=1500, node_color='blue', node_alpha=0.3,
-               node_text_size=12,  edge_alpha=0.8, edge_tickness=1, edge_text_pos=0.7,  text_font='sans-serif', ):
+               node_text_size=12,  edge_alpha=0.8, edge_tickness=1, edge_text_pos=0.75,  text_font='sans-serif', ):
 
     G = nx.DiGraph()
 
@@ -92,14 +92,14 @@ def drawResidualGraph(graph, iteration, node_size=1500, node_color='blue', node_
     edge_labels = dict(zip(forwardEdges, labels))
 
     # draw forward edges labels
-    nx.draw_networkx_edge_labels(G, graph_pos, edge_labels=edge_labels, label_pos=edge_text_pos)
+    nx.draw_networkx_edge_labels(G, graph_pos, edge_labels=edge_labels, label_pos=edge_text_pos, font_size=7)
 
     backLabels = [(edge[2], edge[3]) for edge in backEdges]
     backwardEdges = [(edge[0], edge[1]) for edge in backEdges]
     back_edge_labels = dict(zip(backwardEdges, backLabels))
 
     # draw backward edges labels
-    nx.draw_networkx_edge_labels(G, graph_pos, edge_labels=back_edge_labels, label_pos=edge_text_pos)
+    nx.draw_networkx_edge_labels(G, graph_pos, edge_labels=back_edge_labels, label_pos=edge_text_pos, font_size=7)
 
     plt.savefig("path" + str(iteration) + ".png")
     plt.close()
@@ -108,7 +108,7 @@ def drawResidualGraph(graph, iteration, node_size=1500, node_color='blue', node_
 
 
 # node(value,balance, { exitEdges(node,capacity,weight})
-'''
+
 node6 = Node(6,-2, {})
 node5 = Node(5,0, {6: Edge(node6,2,2)})
 node4 = Node(4,-2, {5: Edge(node5,1,2), 6: Edge(node6,1,2)})
@@ -116,7 +116,7 @@ node2 = Node(2,0, {4: Edge(node4,6,5)})
 node3 = Node(3,1, {2: Edge(node2,2,1), 4: Edge(node4,5,2), 5: Edge(node5,2,2)})
 node1 = Node(1,3, {2: Edge(node2,4,2), 3: Edge(node3,1,3)})
 nodes = [node1,node2,node3,node4,node5,node6]
-'''
+
 '''
 node6 = Node(6,-5, {})
 node5 = Node(5,-2, {6: Edge(node6,9,3)})
@@ -126,13 +126,13 @@ node4 = Node(4,0, {6: Edge(node6,7,2), 3: Edge(node3,2,5)})
 node1 = Node(1,7, {2: Edge(node2,6,2), 3: Edge(node3,7,3), 4: Edge(node4,5,1)})
 nodes = [node1,node2,node3,node4,node5,node6]
 '''
-
+'''
 node4 = Node(4,-4, {})
 node3 = Node(3,0, {4: Edge(node4,5,1)})
 node2 = Node(2,0, {3: Edge(node3,2,1), 4: Edge(node4,3,3)})
 node1 = Node(1,4, {2: Edge(node2,4,2), 3: Edge(node3,2,2)})
 nodes = [node1,node2,node3,node4]
-
+'''
 defectsNode = []
 overflowNode = []
 
