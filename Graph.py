@@ -60,8 +60,7 @@ class Graph:
             node.print()
             for edge in node.edges.values():
                 edge.print()
-                if edge.flow > 0:
-                    cost += edge.weight
+                cost += edge.weight * edge.flow
 
         print("\ntotal cost = " + str(cost))
 
@@ -72,7 +71,8 @@ class Graph:
             costs = dijkstra(self.nodes,root)
 
             for i in range(len(self.nodes)):
-                self.nodes[i].potential -= costs[i+1][0]
+                if costs[i+1][0] != sys.maxsize:
+                    self.nodes[i].potential -= costs[i+1][0]
 
             for end in defectsNodes:
                 # check if end node is reachable, that is the cost of its path is != sys.maxsize
