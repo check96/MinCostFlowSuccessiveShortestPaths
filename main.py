@@ -1,110 +1,62 @@
 import sys
-import networkx as nx
-import matplotlib.pyplot as plt
-from string import ascii_lowercase
+import Graphic as g
+import random
 
 from Graph import Graph
 from Elements import Node
 from Elements import Edge
 
-def drawGraph(graph, node_size=1500, node_color='blue', node_alpha=0.3,
-               node_text_size=12,  edge_alpha=0.8, edge_tickness=1, edge_text_pos=0.7,  text_font='sans-serif', ):
-    G = nx.DiGraph()
-    C = nx.Graph()
 
-    edges = []
+def createGraph():
+    dim = 6
+    nodes = random.randint(4,dim)
 
-    cost = 0
-    for node in graph.nodes:
-        G.add_node(node.value)
-        for edge in node.edges.values():
-            G.add_edge(node.value, edge.node.value)
-            edges.append((node.value, edge.node.value, edge.weight, edge.flow))
-            cost += edge.weight * edge.flow
+    bound = round(nodes/3,0)
 
-    C.add_node(cost)
-    # draw graph
-    # layout: spring, shell, random, spectral
-    graph_pos = nx.shell_layout(G)
+    overflow = random.randint(2, bound)
+    defect = random.randint(2, bound)
 
-    nx.draw_networkx_nodes(G, graph_pos, node_size=node_size, alpha=node_alpha, node_color=node_color)
-    nx.draw_networkx_edges(G, graph_pos, width=edge_tickness, alpha=edge_alpha, edge_color='green',
-                           node_size=node_size, connectionstyle='arc3,rad=-0.15')
+    graph = Graph()
+    balance = 0
+    value = 1
+    transitNodes = nodes - overflow - defect
 
-    node_labels = {}
-    for idx, node in enumerate(G.nodes()):
-        node_labels[node] = ascii_lowercase[idx]
-    nx.draw_networkx_labels(G, graph_pos, label=node_labels, font_size=node_text_size, font_family=text_font)
+    for i in range(defect):
+        b = random.randint(1,10)
+        graph.addNode(Node(value, -b, {}))
+        value += 1
+        balance += b
 
-    labels = [(edge[2], edge[3]) for edge in edges]
-    _edges = [(edge[0], edge[1]) for edge in edges]
-    edge_labels = dict(zip(_edges, labels))
-    nx.draw_networkx_edge_labels(G, graph_pos, edge_labels=edge_labels, label_pos=edge_text_pos)
-
-    # draw cost
-    c_pos = nx.shell_layout(C)
-    for idx, node in enumerate(C.nodes()):
-        node_labels[node] = ascii_lowercase[idx]
-    nx.draw_networkx_nodes(C, c_pos, node_size=node_size, alpha=node_alpha, node_color='red')
-    nx.draw_networkx_labels(C, c_pos, label=node_labels, font_size=node_text_size, font_family=text_font)
-
-    # save figure
-    plt.savefig("path.png")
-    plt.close()
+    for i in range(transitNodes):
+        graph.addNode(Node(value, 0, {}))
+        value += 1
 
 
-def drawResidualGraph(graph, iteration, node_size=1500, node_color='blue', node_alpha=0.3,
-               node_text_size=12,  edge_alpha=0.8, edge_tickness=1, edge_text_pos=0.75,  text_font='sans-serif', ):
+    for i in range(overflow):
+        b = random.randint(1,10)
+        if balance - b < 0:
+            graph.addNode(Node(value, balance, {}))
+            value += 1
+            break
 
-    G = nx.DiGraph()
+        graph.addNode(Node(value,b,{}))
+        value += 1
+        balance -= b
 
-    edges = []
-    backEdges = []
+
 
     for node in graph.nodes:
-        G.add_node(node.value)
+        numEdges = random.randint(1,4)
+        for i in range(numEdges):
+            edge = random.randint(1,len(graph.nodes))
+            #if edge >= len(graph.nodes):
+             #   continue
+            weight = random.randint(1,15)
+            capacity = random.randint(1,15)
 
-        for edge in node.edges.values():
-            if edge.residualCapacity > 0:
-                G.add_edge(node.value, edge.node.value)
-                edges.append((node.value, edge.node.value, edge.reductWeight, edge.residualCapacity))
-            if edge.flow > 0:
-                G.add_edge(edge.node.value, node.value)
-                backEdges.append((edge.node.value, node.value, edge.reductWeight, edge.flow))
+            node.addEdge(Edge(graph.nodes[edge-1],capacity,weight))
 
-  #
-    # draw graph
-    graph_pos = nx.shell_layout(G)
-
-    # draw node
-    nx.draw_networkx_nodes(G, graph_pos, node_size=node_size, alpha=node_alpha, node_color=node_color)
-
-    # draw edges
-    nx.draw_networkx_edges(G, graph_pos, width=edge_tickness, alpha=edge_alpha, edge_color='green',
-                           node_size = node_size, connectionstyle='arc3,rad=0.15')
-
-    # draw node labels
-
-    nx.draw_networkx_labels(G, graph_pos, font_size=node_text_size, font_family=text_font)
-
-    labels = [(edge[2],edge[3]) for edge in edges]
-    forwardEdges = [(edge[0],edge[1]) for edge in edges]
-    edge_labels = dict(zip(forwardEdges, labels))
-
-    # draw forward edges labels
-    nx.draw_networkx_edge_labels(G, graph_pos, edge_labels=edge_labels, label_pos=edge_text_pos, font_size=7)
-
-    backLabels = [(edge[2], edge[3]) for edge in backEdges]
-    backwardEdges = [(edge[0], edge[1]) for edge in backEdges]
-    back_edge_labels = dict(zip(backwardEdges, backLabels))
-
-    # draw backward edges labels
-    nx.draw_networkx_edge_labels(G, graph_pos, edge_labels=back_edge_labels, label_pos=edge_text_pos, font_size=7)
-
-    plt.savefig("path" + str(iteration) + ".png")
-    plt.close()
-    # show graph
-    #plt.show()
+    return graph
 
 
 # node(value,balance, { exitEdges(node,capacity,weight})
@@ -136,7 +88,9 @@ nodes = [node1,node2,node3,node4]
 defectsNode = []
 overflowNode = []
 
-graph = Graph(nodes)
+#graph = Graph(nodes)
+
+graph = createGraph()
 
 # create overflowNodes and defectNodes list
 for node in graph.nodes:
@@ -145,10 +99,11 @@ for node in graph.nodes:
     elif node.balance < 0:
         defectsNode.append(node.value)
 
+print("nodes = %d" %len(graph.nodes))
 print("overflow = " + str(overflowNode))
 print("defect = " + str(defectsNode)+ "\n")
 iteration = 0
-drawResidualGraph(graph,iteration)
+g.drawResidualGraph(graph,iteration)
 iteration += 1
 
 while len(overflowNode) > 0 and len(defectsNode) > 0:
@@ -188,8 +143,8 @@ while len(overflowNode) > 0 and len(defectsNode) > 0:
     #print(overflowNode)
     #print(defectsNode)
 
-    drawResidualGraph(graph,iteration)
+    g.drawResidualGraph(graph,iteration)
     iteration += 1
     graph.print()
 
-drawGraph(graph)
+g.drawGraph(graph)

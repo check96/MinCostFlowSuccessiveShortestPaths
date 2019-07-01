@@ -18,6 +18,8 @@ class Node:
         print("  node" + str(self.value) + "(" + str(self.balance) + "," + str(self.potential) + ")")
 
     def addEdge(self, edge):
+        if self.value == edge.node.value:
+            return
         self.edges[edge.node.value] = edge
 
 

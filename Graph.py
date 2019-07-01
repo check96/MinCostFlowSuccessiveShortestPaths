@@ -1,6 +1,7 @@
 import sys
 from PriorityQueue import PriorityQueue
 
+
 def dijkstra(nodes,root):
 
     costs = []
@@ -24,7 +25,9 @@ def dijkstra(nodes,root):
 
         # expand node and update path costs
         for edge in nodes[node-1].edges.values():
-            if not visited[edge.node.value] and edge.reductWeight + costs[node][0] < costs[edge.node.value][0] \
+            print(edge.node.value)
+            if not visited[edge.node.value] \
+                    and edge.reductWeight + costs[node][0] < costs[edge.node.value][0] \
                     and edge.residualCapacity > 0:
                 costs[edge.node.value] = (edge.reductWeight + costs[node][0], node)
 
@@ -37,7 +40,7 @@ def dijkstra(nodes,root):
 
 class Graph:
 
-    def __init__(self,nodes):
+    def __init__(self,nodes=[]):
         self.nodes = nodes
 
     def addNode(self,node):
