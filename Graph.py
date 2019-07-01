@@ -25,7 +25,6 @@ def dijkstra(nodes,root):
 
         # expand node and update path costs
         for edge in nodes[node-1].edges.values():
-            print(edge.node.value)
             if not visited[edge.node.value] \
                     and edge.reductWeight + costs[node][0] < costs[edge.node.value][0] \
                     and edge.residualCapacity > 0:
@@ -48,26 +47,22 @@ class Graph:
 
     def print(self):
         print("nodes (balance,potential)")
-        print("  edges(node1,node2)=(capacity,weight,reductWeight,flow)\n")
+       # print("  edges(node1,node2)=(capacity,weight,reductWeight,flow)\n")
 
         cost = 0
         for node in self.nodes:
             node.print()
-            for edge in node.edges.values():
-                edge.print()
-                cost += edge.weight * edge.flow
+        #    for edge in node.edges.values():
+         #       edge.print()
+          #      cost += edge.weight * edge.flow
 
-        print("\ntotal cost = " + str(cost))
+        #print("\ntotal cost = " + str(cost))
 
     def findPath(self, overflowNodes, defectsNodes):
 
         for root in overflowNodes:
             # apply Dijkstra algorithm
             costs = dijkstra(self.nodes,root)
-
-            for i in range(len(self.nodes)):
-                if costs[i+1][0] != sys.maxsize:
-                    self.nodes[i].potential -= costs[i+1][0]
 
             for end in defectsNodes:
                 # check if end node is reachable, that is the cost of its path is != sys.maxsize
@@ -80,6 +75,18 @@ class Graph:
                 while end != root:
                     path.append(costs[end][1])
                     end = costs[end][1]
+
+                    # update potentials
+                    for i in range(len(self.nodes)):
+                        if costs[i + 1][0] != sys.maxsize:
+                            self.nodes[i].potential -= costs[i + 1][0]
+
+                    # update reduct weights
+                    for i in range(len(self.nodes)):
+                        if costs[i + 1][0] != sys.maxsize:
+                            for edge in self.nodes[i].edges.values():
+                                if costs[edge.node.value][0] != sys.maxsize:
+                                    edge.reductWeight = edge.weight - self.nodes[i].potential + edge.node.potential
 
                 if path:
                     path.reverse()

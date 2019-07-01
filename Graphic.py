@@ -66,7 +66,7 @@ def drawResidualGraph(graph, iteration, node_size=1500, node_color='blue', node_
                 edges.append((node.value, edge.node.value, edge.reductWeight, edge.residualCapacity))
             if edge.flow > 0:
                 G.add_edge(edge.node.value, node.value)
-                backEdges.append((edge.node.value, node.value, edge.reductWeight, edge.flow))
+                backEdges.append((edge.node.value, node.value, edge.flow))
 
   #
     # draw graph
@@ -90,7 +90,7 @@ def drawResidualGraph(graph, iteration, node_size=1500, node_color='blue', node_
     # draw forward edges labels
     nx.draw_networkx_edge_labels(G, graph_pos, edge_labels=edge_labels, label_pos=edge_text_pos, font_size=7)
 
-    backLabels = [(edge[2], edge[3]) for edge in backEdges]
+    backLabels = [(edge[2]) for edge in backEdges]
     backwardEdges = [(edge[0], edge[1]) for edge in backEdges]
     back_edge_labels = dict(zip(backwardEdges, backLabels))
 

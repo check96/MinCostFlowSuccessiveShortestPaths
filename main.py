@@ -8,9 +8,7 @@ from Elements import Edge
 
 
 def createGraph():
-    dim = 6
-    nodes = random.randint(4,dim)
-
+    nodes = 6
     bound = round(nodes/3,0)
 
     overflow = random.randint(2, bound)
@@ -21,40 +19,33 @@ def createGraph():
     value = 1
     transitNodes = nodes - overflow - defect
 
-    for i in range(defect):
+    for i in range(overflow):
         b = random.randint(1,10)
-        graph.addNode(Node(value, -b, {}))
+        graph.addNode(Node(value,b,{}))
         value += 1
         balance += b
+
 
     for i in range(transitNodes):
         graph.addNode(Node(value, 0, {}))
         value += 1
 
-
-    for i in range(overflow):
+    for i in range(defect):
         b = random.randint(1,10)
-        if balance - b < 0:
-            graph.addNode(Node(value, balance, {}))
-            value += 1
+        if (balance - b < 0) or (i == defect-1 and balance != 0):
+            graph.addNode(Node(value, -balance, {}))
             break
-
-        graph.addNode(Node(value,b,{}))
+        graph.addNode(Node(value, -b, {}))
         value += 1
         balance -= b
 
-
-
-    for node in graph.nodes:
+    for i in range(len(graph.nodes)):
         numEdges = random.randint(1,4)
-        for i in range(numEdges):
-            edge = random.randint(1,len(graph.nodes))
-            #if edge >= len(graph.nodes):
-             #   continue
-            weight = random.randint(1,15)
+        for j in range(numEdges):
+            edge = random.randint(i,len(graph.nodes))
+            weight = random.randint(1,10)
             capacity = random.randint(1,15)
-
-            node.addEdge(Edge(graph.nodes[edge-1],capacity,weight))
+            graph.nodes[i].addEdge(Edge(graph.nodes[edge-1],capacity,weight))
 
     return graph
 
@@ -106,9 +97,11 @@ iteration = 0
 g.drawResidualGraph(graph,iteration)
 iteration += 1
 
+graph.print()
+
 while len(overflowNode) > 0 and len(defectsNode) > 0:
     path = graph.findPath(overflowNode, defectsNode)
-  #  print(path)
+    print("path = " + str(path))
 
     # check if there is no path from overflowNodes to defectNodes
     if path == []:
@@ -123,10 +116,10 @@ while len(overflowNode) > 0 and len(defectsNode) > 0:
 
     # find minimum flow that can be sent in the path
     flow = min(abs(graph.nodes[path[0]-1].balance), abs(graph.nodes[path[-1]-1].balance), minim)
-    #print(flow)
+    print("flow %d " %flow)
 
     # increase flow and update reduct costs in edges of the path
-    graph.updateCosts()
+  #  graph.updateCosts()
     graph.updateFlow(flow, path)
 
     # update balances of root and end node in path
