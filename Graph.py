@@ -62,10 +62,6 @@ class Graph:
             # apply Dijkstra algorithm
             costs = dijkstra(self.nodes,root)
 
-            for i in range(len(self.nodes)):
-                if costs[i+1][0] != sys.maxsize:
-                    self.nodes[i].potential -= costs[i+1][0]
-
             for end in defectsNodes:
                 # check if end node is reachable, that is the cost of its path is != sys.maxsize
                 if costs[end][0] == sys.maxsize:
@@ -77,6 +73,10 @@ class Graph:
                 while end != root:
                     path.append(costs[end][1])
                     end = costs[end][1]
+
+                for i in range(len(self.nodes)):
+                    if costs[i + 1][0] != sys.maxsize:
+                        self.nodes[i].potential -= costs[i + 1][0]
 
                 if path:
                     path.reverse()

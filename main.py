@@ -6,7 +6,7 @@ from Elements import Node
 from Elements import Edge
 
 # node(value,balance, { exitEdges(node,capacity,weight})
-'''
+
 node6 = Node(6,-5, {})
 node5 = Node(5,-2, {6: Edge(node6,9,3)})
 node2 = Node(2,0, {5: Edge(node5,5,1)})
@@ -14,14 +14,14 @@ node3 = Node(3,0, {2: Edge(node2,5,4), 6: Edge(node6,5,2)})
 node4 = Node(4,0, {6: Edge(node6,7,2), 3: Edge(node3,2,5)})
 node1 = Node(1,7, {2: Edge(node2,6,2), 3: Edge(node3,7,3), 4: Edge(node4,5,1)})
 nodes = [node1,node2,node3,node4,node5,node6]
-'''
 
+'''
 node4 = Node(4,-4, {})
 node3 = Node(3,0, {4: Edge(node4,5,1)})
 node2 = Node(2,0, {3: Edge(node3,2,1), 4: Edge(node4,3,3)})
 node1 = Node(1,4, {2: Edge(node2,4,2), 3: Edge(node3,2,2)})
 nodes = [node1,node2,node3,node4]
-
+'''
 defectsNode = []
 overflowNode = []
 
@@ -76,9 +76,6 @@ while len(overflowNode) > 0 and len(defectsNode) > 0:
     # check if end node can exit from defectNode
     if graph.nodes[path[-1]-1].balance == 0:
         defectsNode.remove(path[-1])
-
-    #print(overflowNode)
-    #print(defectsNode)
 
     g.drawResidualGraph(graph,iteration)
     iteration += 1
